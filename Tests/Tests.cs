@@ -140,14 +140,16 @@ namespace Tests
             var stopWatchProviderStub = new Mock<IStopWatchProvider>();
             // Producing an unsafe array
             Item[] list = {new Item(1, 1), new Item(2, 0)};
-            Assert.ThrowsException<OverflowException>(() => MakeSafe(list, out _, stopWatchProviderStub.Object));
+            Assert.ThrowsException<OverflowException>(() => MakeSafe(list, out _, stopWatchProviderStub.Object), 
+                "If we input an impossible shopping bag, throw an overflow exception.");
         }
 
         [TestMethod]
         public void StopWatchProvider_Constructor_ReturnsStopWatch()
         {
             var stopWatch = new StopWatchProvider();
-            Assert.IsInstanceOfType(stopWatch, typeof(Stopwatch));
+            Assert.IsInstanceOfType(stopWatch, typeof(Stopwatch), "Stopwatch provider " +
+                                                                  "returns an object which derives from Stopwatch");
         }
 
         [TestMethod]
@@ -156,7 +158,8 @@ namespace Tests
             var (randomStub, stopWatchStub) = CalculationsStub(0, 0);
 
             var calculations = Calculations(0, randomStub, stopWatchStub);
-            Assert.AreEqual(0, calculations.Count());
+            Assert.AreEqual(0, calculations.Count(), "If we ask for 0 times, " +
+                                                     "return an array of zero items");
         }
 
         [TestMethod]
@@ -164,7 +167,8 @@ namespace Tests
         {
             var (randomStub, stopWatchStub) = CalculationsStub(0, 0);
             var calculations = Calculations(0, randomStub, stopWatchStub);
-            Assert.IsInstanceOfType(calculations, typeof(IEnumerable<Tuple<double, double>>));
+            Assert.IsInstanceOfType(calculations, typeof(IEnumerable<Tuple<double, double>>),
+                "The 'Calculations' function should return an array of tuples of doubles");
         }
 
         [TestMethod]
@@ -172,7 +176,8 @@ namespace Tests
         {
             var (randomStub, stopWatchStub) = CalculationsStub(1, 0);
             var calculations = Calculations(1, randomStub, stopWatchStub);
-            Assert.AreEqual(0d, calculations.Single().Item1);
+            Assert.AreEqual(1, calculations.Count(), "If we ask for one Calculation, " +
+                                                             "a single item should be returned.");
         }
 
         [TestMethod]
@@ -180,11 +185,11 @@ namespace Tests
         {
             var (randomStub, stopWatchStub) = CalculationsStub(0, 1);
             var calculations = Calculations(1, randomStub, stopWatchStub);
-            Assert.IsFalse(calculations.Any());
+            Assert.IsFalse(calculations.Any(), "If we input an impossible shopping bag, nothing should be returned");
         }
 
 
-        public static Tuple<IRandomNextProvider, IStopWatchProvider> CalculationsStub(int str, int wgt)
+        private static Tuple<IRandomNextProvider, IStopWatchProvider> CalculationsStub(int str, int wgt)
         {
             var randomProviderStub = new Mock<IRandomNextProvider>();
             var stopWatchProviderStub = new Mock<IStopWatchProvider>();
