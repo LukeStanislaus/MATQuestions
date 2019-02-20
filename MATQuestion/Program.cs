@@ -37,9 +37,10 @@ namespace MATQuestion
 
     public static class Six
     {
-        private static void Main()
+        public static void Main()
         {
-            Console.WriteLine("Enter the number of items in our shopping bag");
+
+                        Console.WriteLine("Enter the number of items in our shopping bag");
             var input = 0;
             try
             {
@@ -55,9 +56,10 @@ namespace MATQuestion
             var items = ReturnItems(input, x);
             Item[] safeArray = null;
             var elapsedMsNormal = new TimeSpan();
+            var enumerable1 = items as Item[] ?? items.ToArray();
             try
             {
-                safeArray = MakeSafe(items.ToArray(), out elapsedMsNormal, new StopWatchProvider());
+                safeArray = MakeSafe(enumerable1.ToArray(), out elapsedMsNormal, new StopWatchProvider());
             }
             catch (OverflowException)
             {
@@ -70,7 +72,7 @@ namespace MATQuestion
 
             Console.WriteLine("... which took {0} milliseconds to calculate.", elapsedMsNormal.Ticks / 1000d);
 
-            var (orderByStrengthTotal,orderByStrength) = CalculateTimings(e => e.OrderBy(y => y.Strength), items, new StopWatchProvider());
+            var (orderByStrengthTotal,orderByStrength) = CalculateTimings(e => e.OrderBy(y => y.Strength), enumerable1, new StopWatchProvider());
             Console.WriteLine(
                 "However, if we order the shopping bag by strength first and then try to it safe, it takes {0} milliseconds({1} excluding the sorting time), " +
                 "which is {2} times longer",
@@ -78,7 +80,7 @@ namespace MATQuestion
                 orderByStrengthTotal.Ticks / 1000d / (elapsedMsNormal.Ticks / 1000d));
 
 
-            var (orderByWeightTotal,orderByWeight) = CalculateTimings(e => e.OrderBy(y => y.Weight), items, new StopWatchProvider());
+            var (orderByWeightTotal,orderByWeight) = CalculateTimings(e => e.OrderBy(y => y.Weight), enumerable1, new StopWatchProvider());
             var divided = orderByWeightTotal.Ticks * 100d /
                           (elapsedMsNormal.Ticks * 100d);
             Console.WriteLine(
@@ -86,7 +88,7 @@ namespace MATQuestion
                 "which is {2} times longer",
                 orderByWeightTotal.Ticks / 1000d, orderByWeight.Ticks / 1000d, divided);
 
-            var calculations = Calculations(10000);
+            var calculations = Calculations(10000, new RandomProvider(1,4,1,4), new StopWatchProvider());
             var enumerable = calculations as Tuple<double, double>[] ?? calculations.ToArray();
             var strengthAverage = enumerable.Average(a => a.Item1);
 
@@ -98,22 +100,27 @@ namespace MATQuestion
             Environment.Exit(0);
         }
 
-        private static IEnumerable<Tuple<double, double>> Calculations(int count)
+        public static IEnumerable<Tuple<double, double>> Calculations(int count, IRandomNextProvider randomNextProvider, 
+            IStopWatchProvider stopWatchProvider)
         {
             var enumerable = new List<Tuple<double, double>>();
-            TimeSpan elapsedMsNormal;
             var rand = new Random();
             for (var i = 0; i < count; i++)
                 try
                 {
-                    var itemstest = ReturnItems(rand.Next(1, 5), new RandomProvider(1, 15, 1, 4));
-                    MakeSafe(itemstest.ToArray(), out elapsedMsNormal, new StopWatchProvider());
-                    var resultStrength = CalculateTimings(e => e.OrderBy(y => y.Strength), itemstest,
-                        new StopWatchProvider());
-                    var resultStrengthCalc = resultStrength.Item1.Ticks / 1000d / (elapsedMsNormal.Ticks / 1000d);
+                    var items = ReturnItems(rand.Next(1, 5), randomNextProvider).ToArray();
+                    MakeSafe(items.ToArray(), out var elapsedMsNormal, stopWatchProvider);
+                    
+                    var resultStrength = CalculateTimings(e => e.OrderBy(y => y.Strength), items,
+                        stopWatchProvider);
+                    
+                    var resultStrengthCalc = (resultStrength.Item1.Ticks / 1000d) / ((elapsedMsNormal.Ticks==0?1:0) / 1000d);
+                    
                     var resultWeight =
-                        CalculateTimings(e => e.OrderBy(y => y.Weight), itemstest, new StopWatchProvider());
-                    var resultWeightCalc = resultWeight.Item1.Ticks / 1000d / (elapsedMsNormal.Ticks / 1000d);
+                        CalculateTimings(e => e.OrderBy(y => y.Weight), items, stopWatchProvider);
+                    
+                    var resultWeightCalc = (resultWeight.Item1.Ticks / 1000d) / ((elapsedMsNormal.Ticks==0?1:0) / 1000d);
+                    
                     enumerable.Add(new Tuple<double, double>(resultStrengthCalc, resultWeightCalc));
                 }
                 catch(OverflowException)
@@ -145,6 +152,7 @@ namespace MATQuestion
                 return items;
             }
 
+            var factorial = items.Length.Factorial();
             var noOfTries = 0;
             var sorted = false;
 
@@ -160,7 +168,7 @@ namespace MATQuestion
 
                 if (CheckIsSafe(items)) sorted = true;
 
-                if (noOfTries == items.Length.Factorial()) throw new OverflowException();
+                if (noOfTries == factorial) throw new OverflowException();
 
                 noOfTries++;
             }
@@ -191,9 +199,7 @@ namespace MATQuestion
             var totalWeight = 0;
             for (var j = 0; j < index; j++) totalWeight += arrayItems[j].Weight;
 
-            if (arrayItems[index].Strength < totalWeight) return false;
-
-            return true;
+            return arrayItems[index].Strength >= totalWeight;
         }
 
         public static bool CheckIsSafe(Item[] arrayItems)
