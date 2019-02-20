@@ -39,8 +39,7 @@ namespace MATQuestion
     {
         public static void Main()
         {
-
-                        Console.WriteLine("Enter the number of items in our shopping bag");
+            Console.WriteLine("Enter the number of items in our shopping bag");
             var input = 0;
             try
             {
@@ -72,7 +71,8 @@ namespace MATQuestion
 
             Console.WriteLine("... which took {0} milliseconds to calculate.", elapsedMsNormal.Ticks / 1000d);
 
-            var (orderByStrengthTotal,orderByStrength) = CalculateTimings(e => e.OrderBy(y => y.Strength), enumerable1, new StopWatchProvider());
+            var (orderByStrengthTotal, orderByStrength) = CalculateTimings(e => e.OrderBy(y => y.Strength), enumerable1,
+                new StopWatchProvider());
             Console.WriteLine(
                 "However, if we order the shopping bag by strength first and then try to it safe, it takes {0} milliseconds({1} excluding the sorting time), " +
                 "which is {2} times longer",
@@ -80,7 +80,8 @@ namespace MATQuestion
                 orderByStrengthTotal.Ticks / 1000d / (elapsedMsNormal.Ticks / 1000d));
 
 
-            var (orderByWeightTotal,orderByWeight) = CalculateTimings(e => e.OrderBy(y => y.Weight), enumerable1, new StopWatchProvider());
+            var (orderByWeightTotal, orderByWeight) =
+                CalculateTimings(e => e.OrderBy(y => y.Weight), enumerable1, new StopWatchProvider());
             var divided = orderByWeightTotal.Ticks * 100d /
                           (elapsedMsNormal.Ticks * 100d);
             Console.WriteLine(
@@ -88,7 +89,7 @@ namespace MATQuestion
                 "which is {2} times longer",
                 orderByWeightTotal.Ticks / 1000d, orderByWeight.Ticks / 1000d, divided);
 
-            var calculations = Calculations(10000, new RandomProvider(1,4,1,4), new StopWatchProvider());
+            var calculations = Calculations(10000, new RandomProvider(1, 4, 1, 4), new StopWatchProvider());
             var enumerable = calculations as Tuple<double, double>[] ?? calculations.ToArray();
             var strengthAverage = enumerable.Average(a => a.Item1);
 
@@ -100,7 +101,7 @@ namespace MATQuestion
             Environment.Exit(0);
         }
 
-        public static IEnumerable<Tuple<double, double>> Calculations(int count, IRandomNextProvider randomNextProvider, 
+        public static IEnumerable<Tuple<double, double>> Calculations(int count, IRandomNextProvider randomNextProvider,
             IStopWatchProvider stopWatchProvider)
         {
             var enumerable = new List<Tuple<double, double>>();
@@ -110,20 +111,22 @@ namespace MATQuestion
                 {
                     var items = ReturnItems(rand.Next(1, 5), randomNextProvider).ToArray();
                     MakeSafe(items.ToArray(), out var elapsedMsNormal, stopWatchProvider);
-                    
+
                     var resultStrength = CalculateTimings(e => e.OrderBy(y => y.Strength), items,
                         stopWatchProvider);
-                    
-                    var resultStrengthCalc = (resultStrength.Item1.Ticks / 1000d) / ((elapsedMsNormal.Ticks==0?1:0) / 1000d);
-                    
+
+                    var resultStrengthCalc = resultStrength.Item1.Ticks / 1000d /
+                                             ((elapsedMsNormal.Ticks == 0 ? 1 : 0) / 1000d);
+
                     var resultWeight =
                         CalculateTimings(e => e.OrderBy(y => y.Weight), items, stopWatchProvider);
-                    
-                    var resultWeightCalc = (resultWeight.Item1.Ticks / 1000d) / ((elapsedMsNormal.Ticks==0?1:0) / 1000d);
-                    
+
+                    var resultWeightCalc = resultWeight.Item1.Ticks / 1000d /
+                                           ((elapsedMsNormal.Ticks == 0 ? 1 : 0) / 1000d);
+
                     enumerable.Add(new Tuple<double, double>(resultStrengthCalc, resultWeightCalc));
                 }
-                catch(OverflowException)
+                catch (OverflowException)
                 {
                 }
 
