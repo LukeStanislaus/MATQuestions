@@ -6046,11 +6046,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Luke\\RiderProjects\\MATQuestion\\Tests\\Tests.csproj",
+      "projectUniqueName": "C:\\Users\\Luke\\source\\repos\\MATQuestions\\Tests\\Tests.csproj",
       "projectName": "Tests",
-      "projectPath": "C:\\Users\\Luke\\RiderProjects\\MATQuestion\\Tests\\Tests.csproj",
+      "projectPath": "C:\\Users\\Luke\\source\\repos\\MATQuestions\\Tests\\Tests.csproj",
       "packagesPath": "C:\\Users\\Luke\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Luke\\RiderProjects\\MATQuestion\\Tests\\obj\\",
+      "outputPath": "C:\\Users\\Luke\\source\\repos\\MATQuestions\\Tests\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -6069,8 +6069,8 @@
       "frameworks": {
         "netcoreapp2.2": {
           "projectReferences": {
-            "C:\\Users\\Luke\\RiderProjects\\MATQuestion\\MATQuestion\\MATQuestion.csproj": {
-              "projectPath": "C:\\Users\\Luke\\RiderProjects\\MATQuestion\\MATQuestion\\MATQuestion.csproj"
+            "C:\\Users\\Luke\\source\\repos\\MATQuestions\\MATQuestion\\MATQuestion.csproj": {
+              "projectPath": "C:\\Users\\Luke\\source\\repos\\MATQuestions\\MATQuestion\\MATQuestion.csproj"
             }
           }
         }

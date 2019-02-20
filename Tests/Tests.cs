@@ -73,23 +73,21 @@ namespace Tests
         [TestMethod]
         public void MakeSafe_InputArrayOf0_ReturnsArray()
         {
-            var stopWatchProviderStub = new Mock<IStopWatchProvider>();
-
+            var (_, stopWatchProviderStub) = CalculationsStub(0, 0);
             Item[] array = { };
             TimeSpan _;
-            Assert.IsNotNull(MakeSafe(array, out _, stopWatchProviderStub.Object),
+            Assert.IsNotNull(MakeSafe(array, out _, stopWatchProviderStub),
                 "An input array of zero is already ordered!");
         }
 
         [TestMethod]
         public void MakeSafe_UnsafeInputArray_ReturnsSafeArray()
         {
-            var stopWatchProviderStub = new Mock<IStopWatchProvider>();
-
+            var (_, stopWatchProviderStub) = CalculationsStub(0, 0);
             Item[] unSafeArray = {new Item(1, 0), new Item(0, 0)};
             Item[] safeArray = {new Item(0, 0), new Item(1, 0)};
             TimeSpan _;
-            Assert.AreEqual(safeArray[0].Weight, MakeSafe(unSafeArray, out _, stopWatchProviderStub.Object)[0].Weight,
+            Assert.AreEqual(safeArray[0].Weight, MakeSafe(unSafeArray, out _, stopWatchProviderStub)[0].Weight,
                 "An the ordering should be working");
         }
 
@@ -126,11 +124,10 @@ namespace Tests
         [TestMethod]
         public void CalculateTimings_InputFunc_ReturnsTupleOfLongs()
         {
-            var stopWatchProviderStub = new Mock<IStopWatchProvider>();
-            stopWatchProviderStub.Setup(x => x.Elapsed).Returns(new TimeSpan(0));
+            var (_, stopWatchProviderStub) = CalculationsStub(0, 0);
             var list = new List<Item> {new Item(1, 0), new Item(0, 1)};
             Func<IEnumerable<Item>, IOrderedEnumerable<Item>> function = a => a.OrderBy(y => y.Weight);
-            var result = CalculateTimings(function, list, stopWatchProviderStub.Object);
+            var result = CalculateTimings(function, list, stopWatchProviderStub);
             Assert.IsInstanceOfType(result, typeof(Tuple<TimeSpan, TimeSpan>), "We should get as the result.");
         }
 
@@ -140,7 +137,7 @@ namespace Tests
             var stopWatchProviderStub = new Mock<IStopWatchProvider>();
             // Producing an unsafe array
             Item[] list = {new Item(1, 1), new Item(2, 0)};
-            Assert.ThrowsException<OverflowException>(() => MakeSafe(list, out _, stopWatchProviderStub.Object), 
+            Assert.ThrowsException<OverflowException>(() => MakeSafe(list, out _, stopWatchProviderStub.Object),
                 "If we input an impossible shopping bag, throw an overflow exception.");
         }
 
@@ -177,7 +174,7 @@ namespace Tests
             var (randomStub, stopWatchStub) = CalculationsStub(1, 0);
             var calculations = Calculations(1, randomStub, stopWatchStub);
             Assert.AreEqual(1, calculations.Count(), "If we ask for one Calculation, " +
-                                                             "a single item should be returned.");
+                                                     "a single item should be returned.");
         }
 
         [TestMethod]
@@ -194,6 +191,7 @@ namespace Tests
             var randomProviderStub = new Mock<IRandomNextProvider>();
             var stopWatchProviderStub = new Mock<IStopWatchProvider>();
             stopWatchProviderStub.Setup(x => x.Elapsed).Returns(new TimeSpan(0));
+            stopWatchProviderStub.Setup(x => x.StartNew()).Returns(stopWatchProviderStub.Object);
             randomProviderStub.Setup(x => x.NextStr()).Returns(str);
             randomProviderStub.Setup(x => x.NextWgt()).Returns(wgt);
 

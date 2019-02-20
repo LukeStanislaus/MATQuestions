@@ -7,6 +7,12 @@ namespace MATQuestion
 {
     public class StopWatchProvider : Stopwatch, IStopWatchProvider
     {
+        public new IStopWatchProvider StartNew()
+        {
+            var watch = new StopWatchProvider();
+            watch.Start();
+            return watch;
+        }
     }
 
     public class RandomProvider : Random, IRandomNextProvider
@@ -76,7 +82,7 @@ namespace MATQuestion
             Console.WriteLine(
                 "However, if we order the shopping bag by strength first and then try to it safe, it takes {0} milliseconds({1} excluding the sorting time), " +
                 "which is {2} times longer",
-                orderByStrengthTotal.Ticks / 1000, orderByStrength.Ticks / 1000d,
+                orderByStrengthTotal.Ticks / 1000d, orderByStrength.Ticks / 1000d,
                 orderByStrengthTotal.Ticks / 1000d / (elapsedMsNormal.Ticks / 1000d));
 
 
@@ -91,8 +97,8 @@ namespace MATQuestion
 
             var calculations = Calculations(10000, new RandomProvider(1, 4, 1, 4), new StopWatchProvider());
             var enumerable = calculations as Tuple<double, double>[] ?? calculations.ToArray();
-            var strengthAverage = enumerable.Average(a => a.Item1);
 
+            var strengthAverage = enumerable.Average(a => a.Item1);
             var weightAverage = enumerable.Average(a => a.Item2);
             Console.WriteLine(
                 "On average, sorting by strength first takes {0} times longer and sorting by weight first takes {1} times longer",
@@ -116,13 +122,13 @@ namespace MATQuestion
                         stopWatchProvider);
 
                     var resultStrengthCalc = resultStrength.Item1.Ticks / 1000d /
-                                             ((elapsedMsNormal.Ticks == 0 ? 1 : 0) / 1000d);
+                                             ((elapsedMsNormal.Ticks == 0 ? 1 : elapsedMsNormal.Ticks) / 1000d);
 
                     var resultWeight =
                         CalculateTimings(e => e.OrderBy(y => y.Weight), items, stopWatchProvider);
 
                     var resultWeightCalc = resultWeight.Item1.Ticks / 1000d /
-                                           ((elapsedMsNormal.Ticks == 0 ? 1 : 0) / 1000d);
+                                           ((elapsedMsNormal.Ticks == 0 ? 1 : elapsedMsNormal.Ticks) / 1000d);
 
                     enumerable.Add(new Tuple<double, double>(resultStrengthCalc, resultWeightCalc));
                 }
@@ -136,8 +142,7 @@ namespace MATQuestion
         public static Tuple<TimeSpan, TimeSpan> CalculateTimings(Func<IEnumerable<Item>,
             IOrderedEnumerable<Item>> calculation, IEnumerable<Item> arg, IStopWatchProvider stopWatchProvider)
         {
-            var stopWatch = stopWatchProvider;
-            stopWatch.Start();
+            var stopWatch = stopWatchProvider.StartNew();
             var output = calculation.Invoke(arg);
             MakeSafe(output.ToArray(), out var withoutCalcMs, stopWatchProvider);
             var totalMs = stopWatch.Elapsed;
@@ -146,8 +151,7 @@ namespace MATQuestion
 
         public static Item[] MakeSafe(Item[] items, out TimeSpan elapsedMs, IStopWatchProvider stopWatchProvider)
         {
-            var watch = stopWatchProvider;
-            watch.Start();
+            var watch = stopWatchProvider.StartNew();
             if (CheckIsSafe(items))
             {
                 watch.Stop();
@@ -222,7 +226,7 @@ namespace MATQuestion
     public interface IStopWatchProvider
     {
         TimeSpan Elapsed { get; }
-        void Start();
+        IStopWatchProvider StartNew();
         void Stop();
     }
 
