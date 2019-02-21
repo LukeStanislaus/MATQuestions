@@ -1,0 +1,11 @@
+C:\Users\Luke\source\repos\MATQuestions\MATQuestion\bin\Debug\netcoreapp2.2\MATQuestion.deps.json
+C:\Users\Luke\source\repos\MATQuestions\MATQuestion\bin\Debug\netcoreapp2.2\MATQuestion.runtimeconfig.json
+C:\Users\Luke\source\repos\MATQuestions\MATQuestion\bin\Debug\netcoreapp2.2\MATQuestion.runtimeconfig.dev.json
+C:\Users\Luke\source\repos\MATQuestions\MATQuestion\bin\Debug\netcoreapp2.2\MATQuestion.dll
+C:\Users\Luke\source\repos\MATQuestions\MATQuestion\bin\Debug\netcoreapp2.2\MATQuestion.pdb
+C:\Users\Luke\source\repos\MATQuestions\MATQuestion\obj\Debug\netcoreapp2.2\MATQuestion.csprojAssemblyReference.cache
+C:\Users\Luke\source\repos\MATQuestions\MATQuestion\obj\Debug\netcoreapp2.2\MATQuestion.csproj.CoreCompileInputs.cache
+C:\Users\Luke\source\repos\MATQuestions\MATQuestion\obj\Debug\netcoreapp2.2\MATQuestion.AssemblyInfoInputs.cache
+C:\Users\Luke\source\repos\MATQuestions\MATQuestion\obj\Debug\netcoreapp2.2\MATQuestion.AssemblyInfo.cs
+C:\Users\Luke\source\repos\MATQuestions\MATQuestion\obj\Debug\netcoreapp2.2\MATQuestion.dll
+C:\Users\Luke\source\repos\MATQuestions\MATQuestion\obj\Debug\netcoreapp2.2\MATQuestion.pdb

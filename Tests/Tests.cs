@@ -184,7 +184,13 @@ namespace Tests
             var calculations = Calculations(1, randomStub, stopWatchStub);
             Assert.IsFalse(calculations.Any(), "If we input an impossible shopping bag, nothing should be returned");
         }
+        [TestMethod]
+        public void StopWatchProvider_StartNew_ReturnsIStopWatchProvider()
+        {
+            var sw = (new StopWatchProvider()).StartNew();
+            Assert.IsInstanceOfType(sw, typeof(IStopWatchProvider));
 
+        }
 
         private static Tuple<IRandomNextProvider, IStopWatchProvider> CalculationsStub(int str, int wgt)
         {

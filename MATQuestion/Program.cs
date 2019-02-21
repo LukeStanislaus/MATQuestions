@@ -211,10 +211,10 @@ namespace MATQuestion
 
         public static bool CheckIsSafe(Item[] arrayItems)
         {
-            for (var i = 0; i < arrayItems.Count(); i++)
+            var totalWeight = 0;
+            for (var i = 1; i < arrayItems.Count(); i++)
             {
-                var totalWeight = 0;
-                for (var j = 0; j < i; j++) totalWeight += arrayItems[j].Weight;
+                totalWeight += arrayItems[i-1].Weight;
 
                 if (arrayItems[i].Strength < totalWeight) return false;
             }
